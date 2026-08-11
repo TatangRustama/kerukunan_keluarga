@@ -5,9 +5,9 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export const createPool = () => {
-  if (process.env.SUPABASE_DB_URL) {
+  if (process.env.MY_POSTGRES_URL) {
     return new Pool({
-      connectionString: process.env.SUPABASE_DB_URL,
+      connectionString: process.env.MY_POSTGRES_URL,
       connectionTimeoutMillis: 15000,
       ssl: { rejectUnauthorized: false }
     });
