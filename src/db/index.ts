@@ -5,7 +5,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export const createPool = () => {
-  const dbUrl = process.env.POSTGRES_URL || process.env.MY_POSTGRES_URL || process.env.DATABASE_URL;
+  const dbUrl = process.env.CUSTOM_POSTGRES_URL || process.env.POSTGRES_URL;
   if (dbUrl) {
     return new Pool({
       connectionString: dbUrl,
