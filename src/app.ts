@@ -56,7 +56,7 @@ export const app = express();
       res.json({ token, user: newUser[0] });
     } catch (error) {
       console.error("Failed to register user:", error);
-      res.status(500).json({ error: "Failed to register" });
+      res.status(500).json({ error: "Failed to register", details: error instanceof Error ? error.message : String(error) });
     }
   });
 
@@ -82,7 +82,7 @@ export const app = express();
       res.json({ token, user });
     } catch (error) {
       console.error("Failed to login:", error);
-      res.status(500).json({ error: "Failed to login" });
+      res.status(500).json({ error: "Failed to login", details: error instanceof Error ? error.message : String(error) });
     }
   });
 
