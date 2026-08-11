@@ -8,8 +8,8 @@ export default defineConfig({
   out: "./drizzle",
   dialect: "postgresql",
   schemaFilter: ["public"],
-  dbCredentials: process.env.SUPABASE_DB_URL 
-    ? { url: process.env.SUPABASE_DB_URL }
+  dbCredentials: (process.env.CUSTOM_POSTGRES_URL || process.env.DATABASE_URL) 
+    ? { url: (process.env.CUSTOM_POSTGRES_URL || process.env.DATABASE_URL)! }
     : {
         host: process.env.SQL_HOST!,
         user: process.env.SQL_ADMIN_USER!,
