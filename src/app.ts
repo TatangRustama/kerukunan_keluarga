@@ -26,7 +26,7 @@ export const app = express();
       const { nik, name, password } = req.body;
       
       const existingNik = await db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.nik, nik)
+        where: (users, { eq }) => eq(users.nik, String(nik))
       });
 
       if (existingNik) {
@@ -65,7 +65,7 @@ export const app = express();
       const { nik, password } = req.body;
       
       const user = await db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.nik, nik)
+        where: (users, { eq }) => eq(users.nik, String(nik))
       });
 
       if (!user || !user.password) {
