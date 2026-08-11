@@ -3,14 +3,13 @@ dotenv.config();
 
 import express from "express";
 import path from "path";
-import { createServer as createViteServer } from "vite";
 import { app } from "./src/app.ts";
 
 const PORT = 3000;
 
 async function startServer() {
-  // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
@@ -24,9 +23,16 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+  // Only listen if this script is executed directly (not imported)
+  // Vercel serverless functions import the module, so this prevents EADDRINUSE
+  if (process.env.VERCEL !== "1") {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  }
 }
 
 startServer();
+
+// Export the app for Vercel Serverless Functions
+export default app;

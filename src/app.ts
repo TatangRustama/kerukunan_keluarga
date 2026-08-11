@@ -2,11 +2,11 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
-import { requireAuth, AuthRequest } from "./middleware/auth.js";
+import { requireAuth, AuthRequest } from "./middleware/auth.ts";
 import { eq, ilike, or, desc, sql, and } from 'drizzle-orm';
-import { db } from "./db/index.js";
-import { members, users, events, announcements } from "./db/schema.js";
-import { getOrCreateUser } from "./db/users.js";
+import { db } from "./db/index.ts";
+import { members, users, events, announcements } from "./db/schema.ts";
+import { getOrCreateUser } from "./db/users.ts";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
