@@ -1,11 +1,52 @@
-<div align="center">
+# Kerukunan Basanohi SUA
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+A community application for Kerukunan Basanohi SUA built with React, Vite, Express, and PostgreSQL (Drizzle ORM).
 
-  <h1>Built with AI Studio</h2>
+## Features
+- Member Management
+- Event/Activity Management 
+- News & Announcements
+- User Authentication & Roles
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## Prerequisites
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+- Node.js (v18 or higher)
+- PostgreSQL Database (Local or Supabase)
 
-</div>
+## Getting Started
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Configure environment variables:**
+   Copy `.env.example` to `.env` and fill in your database credentials and JWT secret.
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Set up the Database Schema:**
+   The project uses Drizzle ORM. To push the schema to your database, run:
+   ```bash
+   npm run db:push
+   ```
+
+4. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+   The app will be available at `http://localhost:3000`.
+
+## Building for Production
+
+To build the application for production:
+```bash
+npm run build
+```
+This will compile both the React frontend and the Express backend into the `dist/` directory.
+
+To start the production server:
+```bash
+npm start
+```

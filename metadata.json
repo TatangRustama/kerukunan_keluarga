@@ -1,0 +1,6 @@
+{
+  "name": "Kerukunan Basanohi SUA",
+  "description": "A community application for Kerukunan Basanohi SUA",
+  "requestFramePermissions": ["camera", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

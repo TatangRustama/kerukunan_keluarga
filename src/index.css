@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-pkk-bg: #f8fafc;
+  --color-pkk-surface: #ffffff;
+  
+  --color-pkk-primary: #1d4ed8;
+  --color-pkk-primary-light: #dbeafe;
+  --color-pkk-primary-dark: #1e40af;
+  
+  --color-pkk-text-main: #1e293b;
+  --color-pkk-text-muted: #64748b;
+  
+  --color-pkk-border: #e2e8f0;
+
+  --shadow-ambient: 0px 10px 25px rgba(29, 78, 216, 0.04);
+  --shadow-nav: 0px -4px 20px rgba(0, 0, 0, 0.05);
+
+  --radius-4xl: 24px;
+}
+
+body {
+  background-color: var(--color-pkk-bg);
+  color: var(--color-pkk-text-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hide scrollbar for clean UI but allow scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
