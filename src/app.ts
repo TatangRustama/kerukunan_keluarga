@@ -171,6 +171,25 @@ export const app = express();
     }
   });
 
+  app.get("/api/dashboard/stats", requireAuth, async (req: AuthRequest, res) => {
+    try {
+      const memberCount = await db.select({ count: sql<number>`count(*)`.mapWith(Number) }).from(members);
+      const totalMembers = memberCount[0].count;
+
+      const today = new Date().toISOString().split('T')[0];
+      const nextEvents = await db.select().from(events)
+        .where(sql`${events.date} >= ${today}`)
+        .orderBy(events.date)
+        .limit(1);
+      const nextEvent = nextEvents.length > 0 ? nextEvents[0] : null;
+
+      res.json({ totalMembers, nextEvent });
+    } catch (error) {
+      console.error("Failed to fetch dashboard stats:", error);
+      res.status(500).json({ error: "Failed to fetch dashboard stats" });
+    }
+  });
+
   app.get("/api/members", requireAuth, async (req: AuthRequest, res) => {
     try {
       const allMembers = await db.select().from(members);

@@ -10,23 +10,30 @@ import { id } from 'date-fns/locale';
 export function Dashboard({ onNavigate }: { onNavigate: (tab: string) => void }) {
   const { token } = useAuth();
   const [newsData, setNewsData] = useState<Announcement[]>([]);
+  const [stats, setStats] = useState<{totalMembers: number, nextEvent: any}>({ totalMembers: 0, nextEvent: null });
 
   useEffect(() => {
     if (!token) return;
-    const fetchAnnouncements = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch('/api/announcements?limit=3', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (res.ok) {
-          const data = await res.json();
+        const [newsRes, statsRes] = await Promise.all([
+          fetch('/api/announcements?limit=3', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('/api/dashboard/stats', { headers: { 'Authorization': `Bearer ${token}` } })
+        ]);
+        
+        if (newsRes.ok) {
+          const data = await newsRes.json();
           setNewsData(data.data);
         }
+        if (statsRes.ok) {
+          const statsData = await statsRes.json();
+          setStats(statsData);
+        }
       } catch (error) {
-        console.error("Failed to fetch announcements", error);
+        console.error("Failed to fetch dashboard data", error);
       }
     };
-    fetchAnnouncements();
+    fetchData();
   }, [token]);
 
   return (
@@ -46,7 +53,7 @@ export function Dashboard({ onNavigate }: { onNavigate: (tab: string) => void })
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm font-medium text-pkk-text-muted">Total Anggota</p>
-                <h2 className="text-[32px] font-bold text-pkk-primary mt-1 tracking-tight">1.248</h2>
+                <h2 className="text-[32px] font-bold text-pkk-primary mt-1 tracking-tight">{stats.totalMembers}</h2>
               </div>
               <div className="p-2.5 bg-pkk-primary-light rounded-2xl text-pkk-primary">
                 <Users size={24} className="fill-current" />
@@ -66,23 +73,21 @@ export function Dashboard({ onNavigate }: { onNavigate: (tab: string) => void })
             </div>
           </Card>
           
-          {/* Small Card: Funds */}
-          <Card className="p-5 flex flex-col justify-between h-[120px]">
-            <p className="text-xs font-medium text-pkk-text-muted">Iuran Terkumpul</p>
-            <div className="mt-2">
-              <h3 className="text-xl font-bold text-pkk-text-main">Rp 4.5M</h3>
-              <div className="w-full h-1.5 bg-pkk-primary-light rounded-full mt-3 overflow-hidden">
-                <div className="bg-pkk-primary h-full w-3/4 rounded-full"></div>
-              </div>
+          {/* Next Event Card - Full Width */}
+          <Card className="col-span-2 p-5 flex justify-between items-center h-auto cursor-pointer active:scale-[0.98] transition-transform" onClick={() => onNavigate('kegiatan')}>
+            <div>
+              <p className="text-xs font-medium text-pkk-text-muted mb-1">Acara Berikutnya</p>
+              {stats.nextEvent ? (
+                <>
+                  <h3 className="text-xl font-bold text-pkk-text-main truncate max-w-[200px]">{stats.nextEvent.title}</h3>
+                  <p className="text-sm font-medium text-pkk-primary mt-1">{format(new Date(stats.nextEvent.date), 'dd MMM yyyy', { locale: id })}</p>
+                </>
+              ) : (
+                <p className="text-sm font-medium text-pkk-text-main mt-1">Belum ada acara</p>
+              )}
             </div>
-          </Card>
-
-          {/* Small Card: Next Event */}
-          <Card className="p-5 flex flex-col justify-between h-[120px]">
-            <p className="text-xs font-medium text-pkk-text-muted">Acara Berikutnya</p>
-            <div className="mt-2">
-              <h3 className="text-xl font-bold text-pkk-text-main truncate">Arisan</h3>
-              <p className="text-sm font-medium text-pkk-primary mt-1">20 Jan</p>
+            <div className="bg-pkk-bg p-3 rounded-2xl">
+              <ChevronRight size={24} className="text-pkk-primary" />
             </div>
           </Card>
         </section>
