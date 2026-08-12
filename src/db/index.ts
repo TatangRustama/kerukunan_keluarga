@@ -6,6 +6,7 @@ dotenv.config();
 
 export const createPool = () => {
   const dbUrl = process.env.CUSTOM_POSTGRES_URL || process.env.POSTGRES_URL;
+
   if (dbUrl) {
     return new Pool({
       connectionString: dbUrl,
@@ -19,7 +20,7 @@ export const createPool = () => {
     password: process.env.SQL_PASSWORD,
     database: process.env.SQL_DB_NAME,
     connectionTimeoutMillis: 15000,
-    ssl: { rejectUnauthorized: false }
+    ssl: false
   });
 };
 

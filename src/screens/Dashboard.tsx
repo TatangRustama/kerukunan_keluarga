@@ -55,7 +55,7 @@ export function Dashboard({ onNavigate }: { onNavigate: (tab: string) => void })
                 <p className="text-sm font-medium text-pkk-text-muted">Total Anggota</p>
                 <h2 className="text-[32px] font-bold text-pkk-primary mt-1 tracking-tight">{stats.totalMembers}</h2>
               </div>
-              <div className="p-2.5 bg-pkk-primary-light rounded-2xl text-pkk-primary">
+              <div className="p-2.5 bg-pkk-primary-light rounded-xl text-pkk-primary">
                 <Users size={24} className="fill-current" />
               </div>
             </div>
@@ -86,7 +86,7 @@ export function Dashboard({ onNavigate }: { onNavigate: (tab: string) => void })
                 <p className="text-sm font-medium text-pkk-text-main mt-1">Belum ada acara</p>
               )}
             </div>
-            <div className="bg-pkk-bg p-3 rounded-2xl">
+            <div className="bg-pkk-bg p-3 rounded-xl">
               <ChevronRight size={24} className="text-pkk-primary" />
             </div>
           </Card>
@@ -100,7 +100,7 @@ export function Dashboard({ onNavigate }: { onNavigate: (tab: string) => void })
           <div className="grid grid-cols-1 gap-3">
             <button 
               onClick={() => onNavigate('join')}
-              className="w-full bg-pkk-primary py-4 px-5 rounded-2xl text-white flex items-center justify-between transition-transform active:scale-[0.98] shadow-lg shadow-pkk-primary/20"
+              className="w-full bg-pkk-primary py-4 px-5 rounded-xl text-white flex items-center justify-between transition-transform active:scale-[0.98] shadow-lg shadow-pkk-primary/20"
             >
               <div className="flex items-center gap-3">
                 <UserPlus size={22} />
@@ -110,7 +110,7 @@ export function Dashboard({ onNavigate }: { onNavigate: (tab: string) => void })
             </button>
             <button 
               onClick={() => onNavigate('alerts')}
-              className="w-full bg-pkk-primary-light py-4 px-5 rounded-2xl text-pkk-primary flex items-center justify-between transition-transform active:scale-[0.98]"
+              className="w-full bg-pkk-primary-light py-4 px-5 rounded-xl text-pkk-primary flex items-center justify-between transition-transform active:scale-[0.98]"
             >
               <div className="flex items-center gap-3">
                 <Megaphone size={22} />

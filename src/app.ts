@@ -87,6 +87,57 @@ export const app = express();
     }
   });
 
+  app.post("/api/auth/change-password", requireAuth, async (req: AuthRequest, res) => {
+    try {
+      const { oldPassword, newPassword } = req.body;
+      const { uid } = req.user!;
+
+      const user = await db.query.users.findFirst({
+        where: (users, { eq }) => eq(users.uid, uid)
+      });
+
+      if (!user || !user.password) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const isValidPassword = await bcrypt.compare(oldPassword, user.password);
+      if (!isValidPassword) {
+        return res.status(401).json({ error: "Password lama salah" });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await db.update(users).set({ password: hashedPassword }).where(eq(users.uid, uid));
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Failed to change password:", error);
+      res.status(500).json({ error: "Failed to change password" });
+    }
+  });
+
+  app.post("/api/auth/reset-password", requireAuth, async (req: AuthRequest, res) => {
+    try {
+      const { targetUid, newPassword } = req.body;
+      const { uid } = req.user!;
+
+      const caller = await db.query.users.findFirst({
+        where: (users, { eq }) => eq(users.uid, uid)
+      });
+
+      if (caller?.role !== 'super_admin') {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await db.update(users).set({ password: hashedPassword }).where(eq(users.uid, targetUid));
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Failed to reset password:", error);
+      res.status(500).json({ error: "Failed to reset password" });
+    }
+  });
+
   // User related routes
   app.get("/api/users/me", requireAuth, async (req: AuthRequest, res) => {
     try {

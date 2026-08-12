@@ -12,7 +12,7 @@ export function Card({ children, className, onClick, ...props }: CardProps) {
     <div 
       onClick={onClick}
       className={cn(
-        "bg-pkk-surface rounded-4xl border border-pkk-border shadow-ambient transition-transform active:scale-[0.98]",
+        "bg-pkk-surface rounded-xl border border-pkk-border shadow-ambient transition-transform active:scale-[0.98]",
         className
       )}
       {...props}

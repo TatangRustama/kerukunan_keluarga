@@ -7,6 +7,7 @@ import { MessageBlast } from './screens/MessageBlast';
 import { AdminDashboard } from './screens/AdminDashboard';
 import { Kegiatan } from './screens/Kegiatan';
 import { Berita } from './screens/Berita';
+import { Profile } from './screens/Profile';
 import { Auth } from './screens/Auth';
 import { Header } from './components/Header';
 import { TabType } from './types';
@@ -63,20 +64,7 @@ function AppContent() {
       {currentTab === 'berita' && <Berita onNavigate={(tab) => setCurrentTab(tab as TabType)} />}
       {currentTab === 'alerts' && <MessageBlast onBack={() => setCurrentTab('home')} />}
       {currentTab === 'admin' && <AdminDashboard onNavigate={(tab) => setCurrentTab(tab as TabType)} />}
-      {currentTab === 'profile' && (
-        <>
-          <Header title="Profile" onNavigate={(tab) => setCurrentTab(tab as TabType)} />
-          <div className="flex-1 flex flex-col items-center justify-center text-pkk-text-muted space-y-4">
-            <p>Profile Settings Coming Soon</p>
-            <button 
-              onClick={signOut}
-              className="px-6 py-3 bg-red-100 text-red-600 font-semibold rounded-xl hover:bg-red-200 transition-colors"
-            >
-              Sign Out
-            </button>
-          </div>
-        </>
-      )}
+      {currentTab === 'profile' && <Profile onNavigate={(tab) => setCurrentTab(tab as TabType)} />}
     </Layout>
     </>
   );

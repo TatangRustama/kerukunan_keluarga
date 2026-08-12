@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Card } from '@/components/Card';
 import { AppUser, UserRole } from '@/types';
-import { ShieldAlert, Users, Shield, UserX, UserCheck, Trash2, Plus, X } from 'lucide-react';
+import { ShieldAlert, Users, Shield, UserX, UserCheck, Trash2, Plus, X, Key } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function AdminDashboard({ onNavigate }: { onNavigate?: (tab: string) => void }) {
@@ -11,6 +11,11 @@ export function AdminDashboard({ onNavigate }: { onNavigate?: (tab: string) => v
   const [loading, setLoading] = useState(true);
   
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [userToReset, setUserToReset] = useState<string | null>(null);
+  const [resetPasswordForm, setResetPasswordForm] = useState({ password: '' });
+  const [isResetting, setIsResetting] = useState(false);
+  const [resetError, setResetError] = useState('');
+  
   const [showAddUser, setShowAddUser] = useState(false);
   const [addForm, setAddForm] = useState({ name: '', nik: '', password: '', role: 'operator' as UserRole });
   const [formError, setFormError] = useState('');
@@ -80,6 +85,41 @@ export function AdminDashboard({ onNavigate }: { onNavigate?: (tab: string) => v
     } catch (error) {
       console.error('Failed to delete user', error);
       setUserToDelete(null);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userToReset || !resetPasswordForm.password || !token) return;
+    
+    setIsResetting(true);
+    setResetError('');
+    try {
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          targetUid: userToReset,
+          newPassword: resetPasswordForm.password
+        })
+      });
+      
+      if (res.ok) {
+        setUserToReset(null);
+        setResetPasswordForm({ password: '' });
+        alert('Password berhasil direset');
+      } else {
+        const data = await res.json();
+        setResetError(data.error || 'Gagal mereset password');
+      }
+    } catch (error) {
+      console.error('Failed to reset password', error);
+      setResetError('Terjadi kesalahan sistem');
+    } finally {
+      setIsResetting(false);
     }
   };
 
@@ -189,18 +229,26 @@ export function AdminDashboard({ onNavigate }: { onNavigate?: (tab: string) => v
                 </div>
                 
                 {user.uid !== appUser.uid && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500">Ubah Role:</span>
-                    <select
-                      value={user.role}
-                      onChange={(e) => updateUserRole(user.uid, e.target.value as UserRole)}
-                      className="flex-1 bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-pkk-primary focus:border-pkk-primary block p-2"
+                  <div className="flex flex-col gap-2 mt-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-500">Ubah Role:</span>
+                      <select
+                        value={user.role}
+                        onChange={(e) => updateUserRole(user.uid, e.target.value as UserRole)}
+                        className="flex-1 bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-pkk-primary focus:border-pkk-primary block p-2"
+                      >
+                        <option value="super_admin">Admin</option>
+                        <option value="operator">Operator Aktif</option>
+                        <option value="pending_operator">Menunggu Persetujuan</option>
+                        <option value="non_aktif">Non Aktif</option>
+                      </select>
+                    </div>
+                    <button
+                      onClick={() => setUserToReset(user.uid)}
+                      className="flex items-center justify-center gap-1.5 w-full py-2 bg-orange-50 text-orange-600 hover:bg-orange-100 rounded-lg text-sm font-semibold transition-colors mt-1"
                     >
-                      <option value="super_admin">Admin</option>
-                      <option value="operator">Operator Aktif</option>
-                      <option value="pending_operator">Menunggu Persetujuan</option>
-                      <option value="non_aktif">Non Aktif</option>
-                    </select>
+                      <Key size={16} /> Reset Password
+                    </button>
                   </div>
                 )}
                 {user.uid === appUser.uid && (
@@ -210,6 +258,47 @@ export function AdminDashboard({ onNavigate }: { onNavigate?: (tab: string) => v
                 )}
               </Card>
             ))}
+          </div>
+        )}
+
+        {/* Reset Password Modal */}
+        {userToReset && (
+          <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-bold text-gray-900">Reset Password User</h3>
+                <button onClick={() => setUserToReset(null)} className="p-1 text-gray-400 hover:text-gray-600">
+                  <X size={20} />
+                </button>
+              </div>
+              <form onSubmit={handleResetPassword}>
+                {resetError && (
+                  <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-xl">
+                    {resetError}
+                  </div>
+                )}
+                <div className="space-y-4 mb-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
+                    <input 
+                      type="text" 
+                      required
+                      value={resetPasswordForm.password}
+                      onChange={(e) => setResetPasswordForm({ password: e.target.value })}
+                      placeholder="Masukkan password baru"
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-3 text-sm focus:outline-none focus:border-pkk-primary focus:ring-1 focus:ring-pkk-primary"
+                    />
+                  </div>
+                </div>
+                <button 
+                  type="submit"
+                  disabled={isResetting || !resetPasswordForm.password}
+                  className="w-full py-3 rounded-xl bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors disabled:opacity-50"
+                >
+                  {isResetting ? 'Menyimpan...' : 'Reset Password'}
+                </button>
+              </form>
+            </div>
           </div>
         )}
 
